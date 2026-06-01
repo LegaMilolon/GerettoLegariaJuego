@@ -102,3 +102,17 @@ polygon = PackedVector2Array(3922, 1588, 4887, 1617, 4778, 2106, 4711, 2599, 371
 [node name="Poligono" type="CollisionPolygon2D" parent="Zonas/qarth" unique_id=1106944585]
 position = Vector2(135, 884)
 polygon = PackedVector2Array(4196, 1672, 5520, 1727, 5500, 2400, 5520, 2800, 4964, 2792, 4029, 2675)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Contador" type="Label" parent="UI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 500.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+text = "Infectados: 0 / 0"

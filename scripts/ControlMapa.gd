@@ -92,12 +92,13 @@ var acumulador = {}
 var zona_activa = {}
 var fotogramas = 0
 var intervalo = 30
+var juego_iniciado = false
 var color_hover = Color(1, 1, 1, 0.25)
-var color_infectada = Color(0.7, 0, 0, 0.3)
 var color_nada = Color(0, 0, 0, 0)
 
 @onready var camara = $Camara
 @onready var sprite_mapa = $Mapa
+@onready var contador = $UI/Contador
 
 
 func _ready():
@@ -190,18 +191,32 @@ func _process(_delta):
 			infectados[nombre] += nuevos
 			if infectados[nombre] > poblacion:
 				infectados[nombre] = poblacion
+		var porcentaje = float(infectados[nombre]) / float(poblacion)
+		var zona = $Zonas.get_node(NodePath(nombre))
+		zona.get_node("Visual").color = Color(0.7, 0, 0, porcentaje * 0.7)
+	var total_infectados = 0
+	var total_poblacion = 0
+	for nombre in infectados.keys():
+		total_infectados += infectados[nombre]
+		total_poblacion += _obtener_poblacion(nombre)
+	contador.text = "Infectados: " + str(total_infectados) + " / " + str(total_poblacion)
 
 
 func _on_zona_click(_viewport, evento, _shape_idx, nombre):
 	if evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT and evento.pressed:
+		if juego_iniciado == true:
+			return
 		if zona_activa[nombre] == false:
+			juego_iniciado = true
 			zona_activa[nombre] = true
 			infectados[nombre] = 1
 			var zona = $Zonas.get_node(NodePath(nombre))
-			zona.get_node("Visual").color = color_infectada
+			zona.get_node("Visual").color = Color(0.7, 0, 0, 0.01)
 
 
 func _on_zona_hover(nombre):
+	if juego_iniciado == true:
+		return
 	var zona = $Zonas.get_node(NodePath(nombre))
 	if zona_activa[nombre] == true:
 		return
@@ -209,6 +224,8 @@ func _on_zona_hover(nombre):
 
 
 func _on_zona_salir(nombre):
+	if juego_iniciado == true:
+		return
 	var zona = $Zonas.get_node(NodePath(nombre))
 	if zona_activa[nombre] == true:
 		return
