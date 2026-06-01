@@ -9,6 +9,83 @@ var mouse_anterior = Vector2.ZERO
 var ancho_imagen = 5652.0
 var alto_imagen  = 3682.0
 
+var norte_propagacion_interna = 0.05
+var norte_propagacion_externa = 0.04
+var norte_poblacion = 4000000
+var norte_exportacion = 0.04
+
+var islas_hierro_propagacion_interna = 0.09
+var islas_hierro_propagacion_externa = 0.05
+var islas_hierro_poblacion = 500000
+var islas_hierro_exportacion = 0.07
+
+var tierras_rios_propagacion_interna = 0.11
+var tierras_rios_propagacion_externa = 0.17
+var tierras_rios_poblacion = 4000000
+
+var valle_propagacion_interna = 0.06
+var valle_propagacion_externa = 0.03
+var valle_poblacion = 3000000
+var valle_exportacion = 0.05
+
+var tierras_oeste_propagacion_interna = 0.13
+var tierras_oeste_propagacion_externa = 0.11
+var tierras_oeste_poblacion = 4000000
+var tierras_oeste_exportacion = 0.10
+
+var tierras_corona_propagacion_interna = 0.22
+var tierras_corona_propagacion_externa = 0.19
+var tierras_corona_poblacion = 3500000
+var tierras_corona_exportacion = 0.16
+
+var dominio_propagacion_interna = 0.16
+var dominio_propagacion_externa = 0.14
+var dominio_poblacion = 12000000
+var dominio_exportacion = 0.14
+
+var tierras_tormenta_propagacion_interna = 0.08
+var tierras_tormenta_propagacion_externa = 0.08
+var tierras_tormenta_poblacion = 3000000
+var tierras_tormenta_exportacion = 0.05
+
+var dorne_propagacion_interna = 0.07
+var dorne_propagacion_externa = 0.05
+var dorne_poblacion = 2000000
+var dorne_exportacion = 0.06
+
+var mas_alla_muro_propagacion_interna = 0.03
+var mas_alla_muro_propagacion_externa = 0.02
+var mas_alla_muro_poblacion = 500000
+
+var braavos_propagacion_interna = 0.19
+var braavos_propagacion_externa = 0.09
+var braavos_poblacion = 800000
+var braavos_exportacion = 0.20
+
+var pentos_propagacion_interna = 0.15
+var pentos_propagacion_externa = 0.12
+var pentos_poblacion = 600000
+var pentos_exportacion = 0.12
+
+var volantis_propagacion_interna = 0.21
+var volantis_propagacion_externa = 0.15
+var volantis_poblacion = 1000000
+var volantis_exportacion = 0.15
+
+var bahia_esclavos_propagacion_interna = 0.18
+var bahia_esclavos_propagacion_externa = 0.10
+var bahia_esclavos_poblacion = 2000000
+var bahia_esclavos_exportacion = 0.11
+
+var qarth_propagacion_interna = 0.14
+var qarth_propagacion_externa = 0.06
+var qarth_poblacion = 700000
+var qarth_exportacion = 0.17
+
+var mar_dothraki_propagacion_interna = 0.04
+var mar_dothraki_propagacion_externa = 0.08
+var mar_dothraki_poblacion = 2000000
+
 @onready var camara = $Camara
 @onready var sprite_mapa = $Mapa
 
