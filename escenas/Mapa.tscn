@@ -1,14 +1,104 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://bw85bd6xfjys5"]
 
-[ext_resource type="Script" path="res://scripts/ControlMapa.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/Mapa.jpg" id="2_tex"]
+[ext_resource type="Script" uid="uid://dgqe2yinwo4bi" path="res://scripts/ControlMapa.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dfqv50t6qdq0v" path="res://assets/Mapa.jpg" id="2_tex"]
 
-[node name="Raiz" type="Node2D"]
+[node name="Raiz" type="Node2D" unique_id=1233597879]
 script = ExtResource("1_script")
 
-[node name="Mapa" type="Sprite2D" parent="."]
-centered = false
+[node name="Mapa" type="Sprite2D" parent="." unique_id=453262697]
 texture = ExtResource("2_tex")
+centered = false
 
-[node name="Camara" type="Camera2D" parent="."]
-enabled = true
+[node name="Camara" type="Camera2D" parent="." unique_id=1296264317]
+
+[node name="Zonas" type="Node2D" parent="." unique_id=1065781951]
+
+[node name="mas_alla_muro" type="Area2D" parent="Zonas" unique_id=1458480610]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/mas_alla_muro" unique_id=638309026]
+position = Vector2(-3.9065704, 0.9216461)
+scale = Vector2(0.98120934, 1.0054152)
+polygon = PackedVector2Array(353, -4, 1976, 7, 1993, 324, 1982, 546, 400, 550, 300, 300)
+
+[node name="norte" type="Area2D" parent="Zonas" unique_id=1508735879]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/norte" unique_id=990762371]
+polygon = PackedVector2Array(395, 552, 1945, 552, 1650, 850, 1845, 1028, 1400, 1103, 1297, 1251, 692, 1194, 458, 1008, 300, 750)
+
+[node name="islas_hierro" type="Area2D" parent="Zonas" unique_id=1546107674]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/islas_hierro" unique_id=492979426]
+position = Vector2(445, 87)
+polygon = PackedVector2Array(138, 1311, 592, 1381, 505, 1431, 519, 1464, 653, 1447, 656, 1508, 516, 1576, 347, 1585, 180, 1603, 130, 1500)
+
+[node name="tierras_rios" type="Area2D" parent="Zonas" unique_id=1615409351]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/tierras_rios" unique_id=686628029]
+polygon = PackedVector2Array(688, 1196, 1298, 1253, 1400, 1500, 1338, 1701, 1285, 1851, 790, 1775, 798, 1679, 963, 1666, 1104, 1601, 1100, 1527, 966, 1550, 945, 1516, 1042, 1461, 602, 1357, 592, 1270)
+
+[node name="valle" type="Area2D" parent="Zonas" unique_id=609826412]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/valle" unique_id=397383499]
+polygon = PackedVector2Array(1410, 1100, 1750, 1050, 1850, 1250, 1963, 1564, 1384, 1560, 1398, 1508, 1292, 1256)
+
+[node name="tierras_oeste" type="Area2D" parent="Zonas" unique_id=1071080465]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/tierras_oeste" unique_id=432266104]
+position = Vector2(282, 19)
+polygon = PackedVector2Array(450, 1771, 508, 1758, 1006, 1835, 935, 2077, 320, 2100, 250, 1880)
+
+[node name="tierras_corona" type="Area2D" parent="Zonas" unique_id=2075175983]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/tierras_corona" unique_id=484383456]
+polygon = PackedVector2Array(1384, 1563, 1962, 1560, 1850, 1750, 1825, 2207, 1174, 2247, 1320, 1750)
+
+[node name="dominio" type="Area2D" parent="Zonas" unique_id=919706621]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/dominio" unique_id=418250930]
+polygon = PackedVector2Array(625, 2120, 1211, 2094, 1172, 2242, 1200, 2400, 1265, 2716, 500, 2750, 637, 2454)
+
+[node name="tierras_tormenta" type="Area2D" parent="Zonas" unique_id=1489353187]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/tierras_tormenta" unique_id=1253223782]
+polygon = PackedVector2Array(1179, 2243, 1774, 2209, 1922, 2248, 1849, 2614, 1260, 2709, 1181, 2257)
+
+[node name="dorne" type="Area2D" parent="Zonas" unique_id=1693537455]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/dorne" unique_id=1555010129]
+polygon = PackedVector2Array(500, 2760, 1892, 2678, 1973, 2911, 1856, 3147, 629, 3150, 450, 3050)
+
+[node name="braavos" type="Area2D" parent="Zonas" unique_id=781772175]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/braavos" unique_id=1623512309]
+position = Vector2(-594, 549)
+polygon = PackedVector2Array(2703, 705, 3260, 809, 3419, 815, 3461, 1329, 2562, 1194, 2562, 1029, 2520, 889)
+
+[node name="pentos" type="Area2D" parent="Zonas" unique_id=1663307105]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/pentos" unique_id=1207133224]
+polygon = PackedVector2Array(1962, 1756, 2898, 1888, 2885, 2515, 2409, 2519, 2363, 2753, 2025, 2719, 2048, 2067)
+
+[node name="mar_dothraki" type="Area2D" parent="Zonas" unique_id=951615621]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/mar_dothraki" unique_id=1117825464]
+position = Vector2(-48, 825)
+polygon = PackedVector2Array(2873, 527, 5704, 319, 5692, 1524, 5698, 1775, 2934, 1683, 2940, 1059)
+
+[node name="volantis" type="Area2D" parent="Zonas" unique_id=973653432]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/volantis" unique_id=1509155275]
+position = Vector2(-332, 747)
+polygon = PackedVector2Array(2750, 1760, 3700, 1760, 3635, 2094, 3376, 2277, 2800, 2500, 2700, 2050)
+
+[node name="bahia_esclavos" type="Area2D" parent="Zonas" unique_id=824221358]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/bahia_esclavos" unique_id=1184031236]
+position = Vector2(-556, 939)
+polygon = PackedVector2Array(3922, 1588, 4887, 1617, 4778, 2106, 4711, 2599, 3713, 2708, 3387, 2244, 3868, 1910)
+
+[node name="qarth" type="Area2D" parent="Zonas" unique_id=1715974113]
+
+[node name="Poligono" type="CollisionPolygon2D" parent="Zonas/qarth" unique_id=1106944585]
+position = Vector2(135, 884)
+polygon = PackedVector2Array(4196, 1672, 5520, 1727, 5500, 2400, 5520, 2800, 4964, 2792, 4029, 2675)
