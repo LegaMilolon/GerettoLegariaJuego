@@ -290,8 +290,9 @@ func _process(_delta):
 		if porcentaje_actual < 0.2:
 			continue
 		var chance = (porcentaje_actual - 0.2) / 0.8 * prop_ext
+		var zona_llena = porcentaje_actual >= 1.0
 		if porcentaje_actual >= 0.8:
-			chance = prop_ext * 3.0
+			chance = max(prop_ext * 3.0, 0.4)
 		var mult_ext = 1.0
 		if nombre in zonas_frias and habilidad_frio:
 			mult_ext = 3.0
@@ -305,10 +306,11 @@ func _process(_delta):
 				continue
 			if zona_pendiente[vecino] == true:
 				continue
-			if vecino in zonas_frias and not habilidad_frio:
-				continue
-			if vecino in zonas_calientes and not habilidad_calor:
-				continue
+			if not zona_llena:
+				if vecino in zonas_frias and not habilidad_frio:
+					continue
+				if vecino in zonas_calientes and not habilidad_calor:
+					continue
 			var mult_vecino = 1.0
 			if vecino in zonas_frias and habilidad_frio:
 				mult_vecino = 3.0
