@@ -136,8 +136,9 @@ var vecinos = {
 @onready var label_timer = $UI/Timer
 
 var timer_notificacion = 0.0
-var tiempo_restante = 300.0
+var tiempo_restante = 240.0
 var pulso = 0.0
+var velocidad_juego = 1.0
 
 
 func _ready():
@@ -152,6 +153,7 @@ func _ready():
 	$UI/PanelHabilidades/VBox/BotonFrio.pressed.connect(_on_boton_frio)
 	$UI/PanelHabilidades/VBox/BotonCalor.pressed.connect(_on_boton_calor)
 	$UI/PanelHabilidades/VBox/BotonMutacion.pressed.connect(_on_boton_mutacion)
+	$UI/BotonVelocidad.pressed.connect(_on_boton_velocidad)
 	$UI/PanelHabilidades/VBox/BotonFrio.disabled = true
 	$UI/PanelHabilidades/VBox/BotonCalor.disabled = true
 	$UI/PanelHabilidades/VBox/BotonMutacion.disabled = true
@@ -230,15 +232,16 @@ func _limitar():
 
 
 func _process(_delta):
+	var delta = _delta * velocidad_juego
 	_actualizar_tooltip()
 	if timer_notificacion > 0.0:
-		timer_notificacion -= _delta
+		timer_notificacion -= delta
 		if timer_notificacion <= 0.0:
 			notificacion.text = ""
 		else:
 			notificacion.modulate.a = clamp(timer_notificacion / 2.0, 0.0, 1.0)
 	if juego_iniciado == true:
-		tiempo_restante -= _delta
+		tiempo_restante -= delta
 		var minutos = int(tiempo_restante) / 60
 		var segundos = int(tiempo_restante) % 60
 		label_timer.text = str(minutos) + ":" + str(segundos).pad_zeros(2)
@@ -263,7 +266,7 @@ func _process(_delta):
 		var brillo_borde = 0.8 + sin(pulso * 1.5) * 0.2
 		borde.default_color = Color(brillo_borde, 0.1, 0.1, porcentaje_vis * 0.9)
 		borde.width = 4.0 + porcentaje_vis * 4.0
-	tiempo_acumulado += _delta
+	tiempo_acumulado += delta
 	if tiempo_acumulado < intervalo_tiempo:
 		return
 	tiempo_acumulado = 0.0
@@ -563,3 +566,12 @@ func _actualizar_botones():
 		$UI/PanelHabilidades/VBox/BotonCalor.disabled = puntos_infeccion < costo_habilidad
 	if not habilidad_mutacion:
 		$UI/PanelHabilidades/VBox/BotonMutacion.disabled = puntos_infeccion < costo_habilidad
+
+
+func _on_boton_velocidad():
+	if velocidad_juego == 1.0:
+		velocidad_juego = 3.0
+		$UI/BotonVelocidad.text = "x3"
+	else:
+		velocidad_juego = 1.0
+		$UI/BotonVelocidad.text = "x1"
