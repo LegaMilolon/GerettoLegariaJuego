@@ -1,0 +1,18 @@
+TUTORIALES USADOS
+-----------------------------
+
+https://www.youtube.com/watch?v=YSzhpNdo2HE  juego tipo plague inc
+
+https://www.youtube.com/watch?v=iU5EhBnf0MM  areas clickleables
+
+https://www.youtube.com/watch?v=Mc13Z2gboEk contar frames
+
+https://www.youtube.com/watch?v=sZoYSL0YAGM  hovers
+
+https://www.youtube.com/watch?v=J0VCxl0mCZI  mapa estrategico
+
+https://www.youtube.com/watch?v=guQMaUQMGRY  movimiento de camara
+
+https://www.youtube.com/watch?v=mAbRluH5dKg  mejoras
+
+https://www.youtube.com/watch?v=GOaG2JThmYQ  propagacion

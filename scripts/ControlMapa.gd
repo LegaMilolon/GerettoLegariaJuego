@@ -10,95 +10,134 @@ var mouse_anterior = Vector2.ZERO
 var ancho_imagen = 5652.0
 var alto_imagen  = 3682.0
 
-var norte_propagacion_interna = 0.05
-var norte_propagacion_externa = 0.04
+var norte_propagacion_interna = 0.15
+var norte_propagacion_externa = 0.03
 var norte_poblacion = 4000000
-var norte_exportacion = 0.04
+var norte_exportacion = 0.02
 
-var islas_hierro_propagacion_interna = 0.09
-var islas_hierro_propagacion_externa = 0.05
+var islas_hierro_propagacion_interna = 0.15
+var islas_hierro_propagacion_externa = 0.03
 var islas_hierro_poblacion = 500000
-var islas_hierro_exportacion = 0.07
+var islas_hierro_exportacion = 0.02
 
-var tierras_rios_propagacion_interna = 0.11
-var tierras_rios_propagacion_externa = 0.17
+var tierras_rios_propagacion_interna = 0.22
+var tierras_rios_propagacion_externa = 0.04
 var tierras_rios_poblacion = 4000000
 
-var valle_propagacion_interna = 0.06
+var valle_propagacion_interna = 0.18
 var valle_propagacion_externa = 0.03
 var valle_poblacion = 3000000
-var valle_exportacion = 0.05
+var valle_exportacion = 0.02
 
-var tierras_oeste_propagacion_interna = 0.13
-var tierras_oeste_propagacion_externa = 0.11
+var tierras_oeste_propagacion_interna = 0.22
+var tierras_oeste_propagacion_externa = 0.04
 var tierras_oeste_poblacion = 4000000
-var tierras_oeste_exportacion = 0.10
+var tierras_oeste_exportacion = 0.03
 
-var tierras_corona_propagacion_interna = 0.22
-var tierras_corona_propagacion_externa = 0.19
+var tierras_corona_propagacion_interna = 0.25
+var tierras_corona_propagacion_externa = 0.05
 var tierras_corona_poblacion = 3500000
-var tierras_corona_exportacion = 0.16
+var tierras_corona_exportacion = 0.04
 
-var dominio_propagacion_interna = 0.16
-var dominio_propagacion_externa = 0.14
+var dominio_propagacion_interna = 0.22
+var dominio_propagacion_externa = 0.04
 var dominio_poblacion = 12000000
-var dominio_exportacion = 0.14
+var dominio_exportacion = 0.03
 
-var tierras_tormenta_propagacion_interna = 0.08
-var tierras_tormenta_propagacion_externa = 0.08
+var tierras_tormenta_propagacion_interna = 0.20
+var tierras_tormenta_propagacion_externa = 0.04
 var tierras_tormenta_poblacion = 3000000
-var tierras_tormenta_exportacion = 0.05
+var tierras_tormenta_exportacion = 0.03
 
-var dorne_propagacion_interna = 0.07
+var dorne_propagacion_interna = 0.25
 var dorne_propagacion_externa = 0.05
 var dorne_poblacion = 2000000
-var dorne_exportacion = 0.06
+var dorne_exportacion = 0.04
 
-var mas_alla_muro_propagacion_interna = 0.03
+var mas_alla_muro_propagacion_interna = 0.12
 var mas_alla_muro_propagacion_externa = 0.02
 var mas_alla_muro_poblacion = 500000
 
-var braavos_propagacion_interna = 0.19
-var braavos_propagacion_externa = 0.09
+var braavos_propagacion_interna = 0.20
+var braavos_propagacion_externa = 0.04
 var braavos_poblacion = 800000
-var braavos_exportacion = 0.20
+var braavos_exportacion = 0.03
 
-var pentos_propagacion_interna = 0.15
-var pentos_propagacion_externa = 0.12
+var pentos_propagacion_interna = 0.20
+var pentos_propagacion_externa = 0.04
 var pentos_poblacion = 600000
-var pentos_exportacion = 0.12
+var pentos_exportacion = 0.03
 
-var volantis_propagacion_interna = 0.21
-var volantis_propagacion_externa = 0.15
+var volantis_propagacion_interna = 0.20
+var volantis_propagacion_externa = 0.04
 var volantis_poblacion = 1000000
-var volantis_exportacion = 0.15
+var volantis_exportacion = 0.03
 
-var bahia_esclavos_propagacion_interna = 0.18
-var bahia_esclavos_propagacion_externa = 0.10
+var bahia_esclavos_propagacion_interna = 0.25
+var bahia_esclavos_propagacion_externa = 0.05
 var bahia_esclavos_poblacion = 2000000
-var bahia_esclavos_exportacion = 0.11
+var bahia_esclavos_exportacion = 0.04
 
 var qarth_propagacion_interna = 0.14
-var qarth_propagacion_externa = 0.06
+var qarth_propagacion_externa = 0.02
 var qarth_poblacion = 700000
-var qarth_exportacion = 0.17
+var qarth_exportacion = 0.02
 
-var mar_dothraki_propagacion_interna = 0.04
-var mar_dothraki_propagacion_externa = 0.08
+var mar_dothraki_propagacion_interna = 0.13
+var mar_dothraki_propagacion_externa = 0.02
 var mar_dothraki_poblacion = 2000000
 
 var infectados = {}
 var acumulador = {}
+var acumulador_externo = {}
 var zona_activa = {}
-var fotogramas = 0
-var intervalo = 30
+var tiempo_acumulado = 0.0
+var intervalo_tiempo = 0.5
 var juego_iniciado = false
 var color_hover = Color(1, 1, 1, 0.25)
 var color_nada = Color(0, 0, 0, 0)
+var color_pendiente = Color(1, 1, 1, 0.5)
+var zona_pendiente = {}
+
+var habilidad_frio = false
+var habilidad_calor = false
+var habilidad_viajar = false
+var puntos_infeccion = 0
+var infectados_contados = 0
+var costo_habilidad = 15000000
+
+var zonas_frias = ["mas_alla_muro", "norte", "islas_hierro", "braavos", "valle"]
+var zonas_calientes = ["dorne", "bahia_esclavos", "volantis", "qarth", "mar_dothraki"]
+
+var vecinos = {
+	"mas_alla_muro": ["norte"],
+	"norte": ["mas_alla_muro", "tierras_rios", "islas_hierro"],
+	"islas_hierro": ["norte", "tierras_rios", "tierras_oeste"],
+	"tierras_rios": ["norte", "islas_hierro", "valle", "tierras_oeste", "tierras_corona"],
+	"valle": ["tierras_rios", "tierras_corona"],
+	"tierras_oeste": ["islas_hierro", "tierras_rios", "tierras_corona", "dominio"],
+	"tierras_corona": ["tierras_rios", "valle", "tierras_oeste", "dominio", "tierras_tormenta", "braavos"],
+	"dominio": ["tierras_oeste", "tierras_corona", "tierras_tormenta", "dorne"],
+	"tierras_tormenta": ["tierras_corona", "dominio", "dorne"],
+	"dorne": ["dominio", "tierras_tormenta", "pentos"],
+	"braavos": ["tierras_corona", "pentos", "mar_dothraki"],
+	"pentos": ["dorne", "braavos", "mar_dothraki", "volantis"],
+	"mar_dothraki": ["braavos", "pentos", "volantis", "bahia_esclavos"],
+	"volantis": ["pentos", "mar_dothraki", "bahia_esclavos"],
+	"bahia_esclavos": ["mar_dothraki", "volantis", "qarth"],
+	"qarth": ["bahia_esclavos"]
+}
+
+var costeras_cruce = ["tierras_corona", "dorne", "braavos", "pentos"]
 
 @onready var camara = $Camara
 @onready var sprite_mapa = $Mapa
 @onready var contador = $UI/Contador
+@onready var notificacion = $UI/Notificacion
+@onready var label_timer = $UI/Timer
+
+var timer_notificacion = 0.0
+var tiempo_restante = 150.0
 
 
 func _ready():
@@ -110,10 +149,18 @@ func _ready():
 	zoom_min_val = Vector2(zoom_base, zoom_base)
 	camara.zoom = zoom_min_val
 	camara.position = Vector2(ancho_imagen / 2.0, alto_imagen / 2.0)
+	$UI/BotonFrio.pressed.connect(_on_boton_frio)
+	$UI/BotonCalor.pressed.connect(_on_boton_calor)
+	$UI/BotonViajar.pressed.connect(_on_boton_viajar)
+	$UI/BotonFrio.disabled = true
+	$UI/BotonCalor.disabled = true
+	$UI/BotonViajar.disabled = true
 	for zona in $Zonas.get_children():
 		infectados[zona.name] = 0
 		acumulador[zona.name] = 0.0
+		acumulador_externo[zona.name] = 0.0
 		zona_activa[zona.name] = false
+		zona_pendiente[zona.name] = false
 		zona.input_event.connect(_on_zona_click.bind(zona.name))
 		zona.mouse_entered.connect(_on_zona_hover.bind(zona.name))
 		zona.mouse_exited.connect(_on_zona_salir.bind(zona.name))
@@ -171,10 +218,24 @@ func _limitar():
 
 
 func _process(_delta):
-	fotogramas += 1
-	if fotogramas < intervalo:
+	if timer_notificacion > 0.0:
+		timer_notificacion -= _delta
+		if timer_notificacion <= 0.0:
+			notificacion.text = ""
+		else:
+			notificacion.modulate.a = clamp(timer_notificacion / 2.0, 0.0, 1.0)
+	if juego_iniciado == true:
+		tiempo_restante -= _delta
+		var minutos = int(tiempo_restante) / 60
+		var segundos = int(tiempo_restante) % 60
+		label_timer.text = str(minutos) + ":" + str(segundos).pad_zeros(2)
+		if tiempo_restante <= 0.0:
+			get_tree().change_scene_to_file("res://escenas/Derrota.tscn")
+			return
+	tiempo_acumulado += _delta
+	if tiempo_acumulado < intervalo_tiempo:
 		return
-	fotogramas = 0
+	tiempo_acumulado = 0.0
 	for nombre in zona_activa.keys():
 		if zona_activa[nombre] == false:
 			continue
@@ -182,15 +243,54 @@ func _process(_delta):
 			continue
 		var prop = _obtener_propagacion(nombre)
 		var poblacion = _obtener_poblacion(nombre)
-		if infectados[nombre] >= poblacion:
+		if infectados[nombre] < poblacion:
+			acumulador[nombre] += infectados[nombre] * prop * 100.0
+			if acumulador[nombre] >= 100.0:
+				var nuevos = int(acumulador[nombre] / 100.0)
+				acumulador[nombre] -= nuevos * 100.0
+				infectados[nombre] += nuevos
+				if infectados[nombre] > poblacion:
+					infectados[nombre] = poblacion
+		var prop_ext = _obtener_propagacion_externa(nombre)
+		var porcentaje_actual = float(infectados[nombre]) / float(poblacion)
+		if porcentaje_actual < 0.2:
 			continue
-		acumulador[nombre] += infectados[nombre] * prop * 100.0
-		if acumulador[nombre] >= 100.0:
-			var nuevos = int(acumulador[nombre] / 100.0)
-			acumulador[nombre] -= nuevos * 100.0
-			infectados[nombre] += nuevos
-			if infectados[nombre] > poblacion:
-				infectados[nombre] = poblacion
+		var chance_base = (porcentaje_actual - 0.2) / 0.6
+		if chance_base > 1.0:
+			chance_base = 1.0
+		var mult_ext = 1.0
+		if nombre in zonas_frias and habilidad_frio:
+			mult_ext = 3.0
+		if nombre in zonas_calientes and habilidad_calor:
+			mult_ext = 3.0
+		for vecino in vecinos[nombre]:
+			if zona_activa[vecino] == true:
+				continue
+			if zona_pendiente[vecino] == true:
+				continue
+			if porcentaje_actual >= 0.8:
+				acumulador_externo[vecino] = 100.0
+			else:
+				var mult_vecino = 1.0
+				if vecino in zonas_frias and habilidad_frio:
+					mult_vecino = 3.0
+				if vecino in zonas_calientes and habilidad_calor:
+					mult_vecino = 3.0
+				var mult_viaje = 1.0
+				if habilidad_viajar and nombre in costeras_cruce and vecino in costeras_cruce:
+					mult_viaje = 3.0
+				acumulador_externo[vecino] += infectados[nombre] * prop_ext * 10.0 * chance_base * mult_ext * mult_vecino * mult_viaje
+			if acumulador_externo[vecino] >= 100.0:
+				acumulador_externo[vecino] = 0.0
+				zona_pendiente[vecino] = true
+				infectados[vecino] = 1
+				var zona_vis = $Zonas.get_node(NodePath(vecino))
+				zona_vis.get_node("Visual").color = color_pendiente
+				_mostrar_notificacion(vecino)
+	for nombre in zona_activa.keys():
+		if zona_activa[nombre] == false:
+			continue
+		var poblacion = _obtener_poblacion(nombre)
 		var porcentaje = float(infectados[nombre]) / float(poblacion)
 		var zona = $Zonas.get_node(NodePath(nombre))
 		zona.get_node("Visual").color = Color(0.7, 0, 0, porcentaje * 0.7)
@@ -199,11 +299,24 @@ func _process(_delta):
 	for nombre in infectados.keys():
 		total_infectados += infectados[nombre]
 		total_poblacion += _obtener_poblacion(nombre)
-	contador.text = "Infectados: " + str(total_infectados) + " / " + str(total_poblacion)
+	var nuevos_puntos = total_infectados - infectados_contados
+	if nuevos_puntos > 0:
+		puntos_infeccion += nuevos_puntos
+		infectados_contados = total_infectados
+	contador.text = "Infectados: " + str(total_infectados) + " / " + str(total_poblacion) + "  |  Puntos: " + str(puntos_infeccion)
+	_actualizar_botones()
+	if total_infectados >= total_poblacion:
+		get_tree().change_scene_to_file("res://escenas/Victoria.tscn")
 
 
 func _on_zona_click(_viewport, evento, _shape_idx, nombre):
 	if evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT and evento.pressed:
+		if zona_pendiente[nombre] == true:
+			zona_pendiente[nombre] = false
+			zona_activa[nombre] = true
+			var zona = $Zonas.get_node(NodePath(nombre))
+			zona.get_node("Visual").color = Color(0.7, 0, 0, 0.01)
+			return
 		if juego_iniciado == true:
 			return
 		if zona_activa[nombre] == false:
@@ -272,3 +385,105 @@ func _obtener_poblacion(nombre):
 		"bahia_esclavos": return bahia_esclavos_poblacion
 		"qarth": return qarth_poblacion
 	return 1
+
+
+func _obtener_propagacion_externa(nombre):
+	match nombre:
+		"mas_alla_muro": return mas_alla_muro_propagacion_externa
+		"norte": return norte_propagacion_externa
+		"islas_hierro": return islas_hierro_propagacion_externa
+		"tierras_rios": return tierras_rios_propagacion_externa
+		"valle": return valle_propagacion_externa
+		"tierras_oeste": return tierras_oeste_propagacion_externa
+		"tierras_corona": return tierras_corona_propagacion_externa
+		"dominio": return dominio_propagacion_externa
+		"tierras_tormenta": return tierras_tormenta_propagacion_externa
+		"dorne": return dorne_propagacion_externa
+		"braavos": return braavos_propagacion_externa
+		"pentos": return pentos_propagacion_externa
+		"mar_dothraki": return mar_dothraki_propagacion_externa
+		"volantis": return volantis_propagacion_externa
+		"bahia_esclavos": return bahia_esclavos_propagacion_externa
+		"qarth": return qarth_propagacion_externa
+	return 0.0
+
+
+func _obtener_exportacion(nombre):
+	match nombre:
+		"norte": return norte_exportacion
+		"islas_hierro": return islas_hierro_exportacion
+		"valle": return valle_exportacion
+		"tierras_oeste": return tierras_oeste_exportacion
+		"tierras_corona": return tierras_corona_exportacion
+		"dominio": return dominio_exportacion
+		"tierras_tormenta": return tierras_tormenta_exportacion
+		"dorne": return dorne_exportacion
+		"braavos": return braavos_exportacion
+		"pentos": return pentos_exportacion
+		"volantis": return volantis_exportacion
+		"bahia_esclavos": return bahia_esclavos_exportacion
+		"qarth": return qarth_exportacion
+	return 0.0
+
+
+var nombres_bonitos = {
+	"mas_alla_muro": "Mas alla del Muro",
+	"norte": "El Norte",
+	"islas_hierro": "Islas del Hierro",
+	"tierras_rios": "Tierras de los Rios",
+	"valle": "El Valle",
+	"tierras_oeste": "Tierras del Oeste",
+	"tierras_corona": "Tierras de la Corona",
+	"dominio": "El Dominio",
+	"tierras_tormenta": "Tierras de la Tormenta",
+	"dorne": "Dorne",
+	"braavos": "Braavos",
+	"pentos": "Pentos",
+	"mar_dothraki": "Mar Dothraki",
+	"volantis": "Volantis",
+	"bahia_esclavos": "Bahia de los Esclavos",
+	"qarth": "Qarth"
+}
+
+
+func _mostrar_notificacion(nombre):
+	var bonito = nombres_bonitos[nombre]
+	notificacion.text = bonito + " ha sido infectada!"
+	notificacion.modulate.a = 1.0
+	timer_notificacion = 3.0
+
+
+func _on_boton_frio():
+	if puntos_infeccion < costo_habilidad:
+		return
+	puntos_infeccion -= costo_habilidad
+	habilidad_frio = true
+	$UI/BotonFrio.disabled = true
+	$UI/BotonFrio.text = "FRIO [ON]"
+
+
+func _on_boton_calor():
+	if puntos_infeccion < costo_habilidad:
+		return
+	puntos_infeccion -= costo_habilidad
+	habilidad_calor = true
+	$UI/BotonCalor.disabled = true
+	$UI/BotonCalor.text = "CALOR [ON]"
+
+
+func _on_boton_viajar():
+	if puntos_infeccion < costo_habilidad:
+		return
+	puntos_infeccion -= costo_habilidad
+	habilidad_viajar = true
+	$UI/BotonViajar.disabled = true
+	$UI/BotonViajar.text = "VIAJAR [ON]"
+
+
+func _actualizar_botones():
+	if not habilidad_frio:
+		$UI/BotonFrio.disabled = puntos_infeccion < costo_habilidad
+	if not habilidad_calor:
+		$UI/BotonCalor.disabled = puntos_infeccion < costo_habilidad
+	if not habilidad_viajar:
+		$UI/BotonViajar.disabled = puntos_infeccion < costo_habilidad
