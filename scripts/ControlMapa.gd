@@ -10,80 +10,80 @@ var mouse_anterior = Vector2.ZERO
 var ancho_imagen = 5652.0
 var alto_imagen  = 3682.0
 
-var norte_propagacion_interna = 0.15
+var norte_propagacion_interna = 40.0
 var norte_propagacion_externa = 0.03
 var norte_poblacion = 4000000
 var norte_exportacion = 0.02
 
-var islas_hierro_propagacion_interna = 0.15
+var islas_hierro_propagacion_interna = 35.0
 var islas_hierro_propagacion_externa = 0.03
 var islas_hierro_poblacion = 500000
 var islas_hierro_exportacion = 0.02
 
-var tierras_rios_propagacion_interna = 0.22
+var tierras_rios_propagacion_interna = 28.0
 var tierras_rios_propagacion_externa = 0.04
 var tierras_rios_poblacion = 4000000
 
-var valle_propagacion_interna = 0.18
+var valle_propagacion_interna = 32.0
 var valle_propagacion_externa = 0.03
 var valle_poblacion = 3000000
 var valle_exportacion = 0.02
 
-var tierras_oeste_propagacion_interna = 0.22
+var tierras_oeste_propagacion_interna = 28.0
 var tierras_oeste_propagacion_externa = 0.04
 var tierras_oeste_poblacion = 4000000
 var tierras_oeste_exportacion = 0.03
 
-var tierras_corona_propagacion_interna = 0.25
+var tierras_corona_propagacion_interna = 25.0
 var tierras_corona_propagacion_externa = 0.05
 var tierras_corona_poblacion = 3500000
 var tierras_corona_exportacion = 0.04
 
-var dominio_propagacion_interna = 0.22
+var dominio_propagacion_interna = 35.0
 var dominio_propagacion_externa = 0.04
 var dominio_poblacion = 12000000
 var dominio_exportacion = 0.03
 
-var tierras_tormenta_propagacion_interna = 0.20
+var tierras_tormenta_propagacion_interna = 30.0
 var tierras_tormenta_propagacion_externa = 0.04
 var tierras_tormenta_poblacion = 3000000
 var tierras_tormenta_exportacion = 0.03
 
-var dorne_propagacion_interna = 0.25
+var dorne_propagacion_interna = 25.0
 var dorne_propagacion_externa = 0.05
 var dorne_poblacion = 2000000
 var dorne_exportacion = 0.04
 
-var mas_alla_muro_propagacion_interna = 0.12
+var mas_alla_muro_propagacion_interna = 45.0
 var mas_alla_muro_propagacion_externa = 0.02
 var mas_alla_muro_poblacion = 500000
 
-var braavos_propagacion_interna = 0.20
+var braavos_propagacion_interna = 30.0
 var braavos_propagacion_externa = 0.04
 var braavos_poblacion = 800000
 var braavos_exportacion = 0.03
 
-var pentos_propagacion_interna = 0.20
+var pentos_propagacion_interna = 28.0
 var pentos_propagacion_externa = 0.04
 var pentos_poblacion = 600000
 var pentos_exportacion = 0.03
 
-var volantis_propagacion_interna = 0.20
+var volantis_propagacion_interna = 30.0
 var volantis_propagacion_externa = 0.04
 var volantis_poblacion = 1000000
 var volantis_exportacion = 0.03
 
-var bahia_esclavos_propagacion_interna = 0.25
+var bahia_esclavos_propagacion_interna = 25.0
 var bahia_esclavos_propagacion_externa = 0.05
 var bahia_esclavos_poblacion = 2000000
 var bahia_esclavos_exportacion = 0.04
 
-var qarth_propagacion_interna = 0.14
+var qarth_propagacion_interna = 40.0
 var qarth_propagacion_externa = 0.02
 var qarth_poblacion = 700000
 var qarth_exportacion = 0.02
 
-var mar_dothraki_propagacion_interna = 0.13
+var mar_dothraki_propagacion_interna = 40.0
 var mar_dothraki_propagacion_externa = 0.02
 var mar_dothraki_poblacion = 2000000
 
@@ -137,7 +137,8 @@ var costeras_cruce = ["tierras_corona", "dorne", "braavos", "pentos"]
 @onready var label_timer = $UI/Timer
 
 var timer_notificacion = 0.0
-var tiempo_restante = 150.0
+var tiempo_restante = 300.0
+var pulso = 0.0
 
 
 func _ready():
@@ -172,6 +173,20 @@ func _ready():
 		poligono_vis.scale = poligono_col.scale
 		poligono_vis.color = color_nada
 		zona.add_child(poligono_vis)
+		var borde = Line2D.new()
+		borde.name = "Borde"
+		var puntos = poligono_col.polygon
+		var puntos_cerrado = PackedVector2Array()
+		for p in puntos:
+			puntos_cerrado.append(p)
+		puntos_cerrado.append(puntos[0])
+		borde.points = puntos_cerrado
+		borde.position = poligono_col.position
+		borde.scale = poligono_col.scale
+		borde.width = 6.0
+		borde.default_color = Color(0, 0, 0, 0)
+		borde.antialiased = true
+		zona.add_child(borde)
 
 
 func _input(ev):
@@ -229,9 +244,27 @@ func _process(_delta):
 		var minutos = int(tiempo_restante) / 60
 		var segundos = int(tiempo_restante) % 60
 		label_timer.text = str(minutos) + ":" + str(segundos).pad_zeros(2)
+		if tiempo_restante <= 30.0:
+			label_timer.add_theme_color_override("font_color", Color(1, 0.2, 0.2, 1))
+		else:
+			label_timer.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 		if tiempo_restante <= 0.0:
 			get_tree().change_scene_to_file("res://escenas/Derrota.tscn")
 			return
+	pulso += _delta * 3.0
+	for nombre in zona_activa.keys():
+		if zona_activa[nombre] == false:
+			continue
+		var poblacion_vis = _obtener_poblacion(nombre)
+		var porcentaje_vis = float(infectados[nombre]) / float(poblacion_vis)
+		var zona_v = $Zonas.get_node(NodePath(nombre))
+		var vis = zona_v.get_node("Visual")
+		var brillo = 0.6 + sin(pulso) * 0.1
+		vis.color = Color(brillo, 0, 0, porcentaje_vis * 0.7)
+		var borde = zona_v.get_node("Borde")
+		var brillo_borde = 0.8 + sin(pulso * 1.5) * 0.2
+		borde.default_color = Color(brillo_borde, 0.1, 0.1, porcentaje_vis * 0.9)
+		borde.width = 4.0 + porcentaje_vis * 4.0
 	tiempo_acumulado += _delta
 	if tiempo_acumulado < intervalo_tiempo:
 		return
@@ -244,13 +277,13 @@ func _process(_delta):
 		var prop = _obtener_propagacion(nombre)
 		var poblacion = _obtener_poblacion(nombre)
 		if infectados[nombre] < poblacion:
-			acumulador[nombre] += infectados[nombre] * prop * 100.0
-			if acumulador[nombre] >= 100.0:
-				var nuevos = int(acumulador[nombre] / 100.0)
-				acumulador[nombre] -= nuevos * 100.0
-				infectados[nombre] += nuevos
-				if infectados[nombre] > poblacion:
-					infectados[nombre] = poblacion
+			var ticks_para_llenar = prop / intervalo_tiempo
+			var nuevos = int(poblacion / ticks_para_llenar)
+			if nuevos < 1:
+				nuevos = 1
+			infectados[nombre] += nuevos
+			if infectados[nombre] > poblacion:
+				infectados[nombre] = poblacion
 		var prop_ext = _obtener_propagacion_externa(nombre)
 		var porcentaje_actual = float(infectados[nombre]) / float(poblacion)
 		if porcentaje_actual < 0.2:
@@ -294,13 +327,6 @@ func _process(_delta):
 					var zona_vis = $Zonas.get_node(NodePath(vecino))
 					zona_vis.get_node("Visual").color = color_pendiente
 					_mostrar_notificacion(vecino)
-	for nombre in zona_activa.keys():
-		if zona_activa[nombre] == false:
-			continue
-		var poblacion = _obtener_poblacion(nombre)
-		var porcentaje = float(infectados[nombre]) / float(poblacion)
-		var zona = $Zonas.get_node(NodePath(nombre))
-		zona.get_node("Visual").color = Color(0.7, 0, 0, porcentaje * 0.7)
 	var total_infectados = 0
 	var total_poblacion = 0
 	for nombre in infectados.keys():
@@ -336,6 +362,12 @@ func _on_zona_click(_viewport, evento, _shape_idx, nombre):
 
 func _on_zona_hover(nombre):
 	if juego_iniciado == true:
+		if zona_activa[nombre] == true:
+			var poblacion = _obtener_poblacion(nombre)
+			var porcentaje = float(infectados[nombre]) / float(poblacion) * 100.0
+			var bonito = nombres_bonitos[nombre]
+			$UI/Tooltip.text = bonito + ": " + str(int(porcentaje)) + "%"
+			$UI/Tooltip.visible = true
 		return
 	var zona = $Zonas.get_node(NodePath(nombre))
 	if zona_activa[nombre] == true:
@@ -345,6 +377,7 @@ func _on_zona_hover(nombre):
 
 func _on_zona_salir(nombre):
 	if juego_iniciado == true:
+		$UI/Tooltip.visible = false
 		return
 	var zona = $Zonas.get_node(NodePath(nombre))
 	if zona_activa[nombre] == true:
