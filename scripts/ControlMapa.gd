@@ -101,7 +101,7 @@ var zona_pendiente = {}
 
 var habilidad_frio = false
 var habilidad_calor = false
-var habilidad_viajar = false
+var habilidad_mutacion = false
 var puntos_infeccion = 0
 var infectados_contados = 0
 var costo_habilidad = 15000000
@@ -128,8 +128,6 @@ var vecinos = {
 	"qarth": ["bahia_esclavos"]
 }
 
-var costeras_cruce = ["tierras_corona", "dorne", "braavos", "pentos"]
-
 @onready var camara = $Camara
 @onready var sprite_mapa = $Mapa
 @onready var contador = $UI/Contador
@@ -150,12 +148,12 @@ func _ready():
 	zoom_min_val = Vector2(zoom_base, zoom_base)
 	camara.zoom = zoom_min_val
 	camara.position = Vector2(ancho_imagen / 2.0, alto_imagen / 2.0)
-	$UI/BotonFrio.pressed.connect(_on_boton_frio)
-	$UI/BotonCalor.pressed.connect(_on_boton_calor)
-	$UI/BotonViajar.pressed.connect(_on_boton_viajar)
-	$UI/BotonFrio.disabled = true
-	$UI/BotonCalor.disabled = true
-	$UI/BotonViajar.disabled = true
+	$UI/PanelHabilidades/VBox/BotonFrio.pressed.connect(_on_boton_frio)
+	$UI/PanelHabilidades/VBox/BotonCalor.pressed.connect(_on_boton_calor)
+	$UI/PanelHabilidades/VBox/BotonMutacion.pressed.connect(_on_boton_mutacion)
+	$UI/PanelHabilidades/VBox/BotonFrio.disabled = true
+	$UI/PanelHabilidades/VBox/BotonCalor.disabled = true
+	$UI/PanelHabilidades/VBox/BotonMutacion.disabled = true
 	for zona in $Zonas.get_children():
 		infectados[zona.name] = 0
 		acumulador[zona.name] = 0.0
@@ -277,7 +275,10 @@ func _process(_delta):
 		var prop = _obtener_propagacion(nombre)
 		var poblacion = _obtener_poblacion(nombre)
 		if infectados[nombre] < poblacion:
-			var ticks_para_llenar = prop / intervalo_tiempo
+			var mult_mut = 1.0
+			if habilidad_mutacion:
+				mult_mut = 1.5
+			var ticks_para_llenar = prop / intervalo_tiempo / mult_mut
 			var nuevos = int(poblacion / ticks_para_llenar)
 			if nuevos < 1:
 				nuevos = 1
@@ -288,45 +289,38 @@ func _process(_delta):
 		var porcentaje_actual = float(infectados[nombre]) / float(poblacion)
 		if porcentaje_actual < 0.2:
 			continue
+		var chance = (porcentaje_actual - 0.2) / 0.8 * prop_ext
 		if porcentaje_actual >= 0.8:
-			for vecino in vecinos[nombre]:
-				if zona_activa[vecino] == true:
-					continue
-				if zona_pendiente[vecino] == true:
-					continue
+			chance = prop_ext * 3.0
+		var mult_ext = 1.0
+		if nombre in zonas_frias and habilidad_frio:
+			mult_ext = 3.0
+		if nombre in zonas_calientes and habilidad_calor:
+			mult_ext = 3.0
+		if habilidad_mutacion:
+			mult_ext *= 2.0
+		chance *= mult_ext
+		for vecino in vecinos[nombre]:
+			if zona_activa[vecino] == true:
+				continue
+			if zona_pendiente[vecino] == true:
+				continue
+			if vecino in zonas_frias and not habilidad_frio:
+				continue
+			if vecino in zonas_calientes and not habilidad_calor:
+				continue
+			var mult_vecino = 1.0
+			if vecino in zonas_frias and habilidad_frio:
+				mult_vecino = 3.0
+			if vecino in zonas_calientes and habilidad_calor:
+				mult_vecino = 3.0
+			var chance_final = chance * mult_vecino
+			if randf() < chance_final:
 				zona_pendiente[vecino] = true
 				infectados[vecino] = 1
 				var zona_vis = $Zonas.get_node(NodePath(vecino))
 				zona_vis.get_node("Visual").color = color_pendiente
 				_mostrar_notificacion(vecino)
-		else:
-			var chance = (porcentaje_actual - 0.2) / 0.6 * prop_ext
-			var mult_ext = 1.0
-			if nombre in zonas_frias and habilidad_frio:
-				mult_ext = 3.0
-			if nombre in zonas_calientes and habilidad_calor:
-				mult_ext = 3.0
-			chance *= mult_ext
-			for vecino in vecinos[nombre]:
-				if zona_activa[vecino] == true:
-					continue
-				if zona_pendiente[vecino] == true:
-					continue
-				var mult_vecino = 1.0
-				if vecino in zonas_frias and habilidad_frio:
-					mult_vecino = 3.0
-				if vecino in zonas_calientes and habilidad_calor:
-					mult_vecino = 3.0
-				var mult_viaje = 1.0
-				if habilidad_viajar and nombre in costeras_cruce and vecino in costeras_cruce:
-					mult_viaje = 3.0
-				var chance_final = chance * mult_vecino * mult_viaje
-				if randf() < chance_final:
-					zona_pendiente[vecino] = true
-					infectados[vecino] = 1
-					var zona_vis = $Zonas.get_node(NodePath(vecino))
-					zona_vis.get_node("Visual").color = color_pendiente
-					_mostrar_notificacion(vecino)
 	var total_infectados = 0
 	var total_poblacion = 0
 	for nombre in infectados.keys():
@@ -498,8 +492,8 @@ func _on_boton_frio():
 		return
 	puntos_infeccion -= costo_habilidad
 	habilidad_frio = true
-	$UI/BotonFrio.disabled = true
-	$UI/BotonFrio.text = "FRIO [ON]"
+	$UI/PanelHabilidades/VBox/BotonFrio.disabled = true
+	$UI/PanelHabilidades/VBox/BotonFrio.text = "Frio [ACTIVO]"
 
 
 func _on_boton_calor():
@@ -507,23 +501,24 @@ func _on_boton_calor():
 		return
 	puntos_infeccion -= costo_habilidad
 	habilidad_calor = true
-	$UI/BotonCalor.disabled = true
-	$UI/BotonCalor.text = "CALOR [ON]"
+	$UI/PanelHabilidades/VBox/BotonCalor.disabled = true
+	$UI/PanelHabilidades/VBox/BotonCalor.text = "Calor [ACTIVO]"
 
 
-func _on_boton_viajar():
+func _on_boton_mutacion():
 	if puntos_infeccion < costo_habilidad:
 		return
 	puntos_infeccion -= costo_habilidad
-	habilidad_viajar = true
-	$UI/BotonViajar.disabled = true
-	$UI/BotonViajar.text = "VIAJAR [ON]"
+	habilidad_mutacion = true
+	$UI/PanelHabilidades/VBox/BotonMutacion.disabled = true
+	$UI/PanelHabilidades/VBox/BotonMutacion.text = "Mutacion [ACTIVO]"
 
 
 func _actualizar_botones():
+	$UI/PanelHabilidades/VBox/LabelPuntos.text = "Puntos: " + str(puntos_infeccion)
 	if not habilidad_frio:
-		$UI/BotonFrio.disabled = puntos_infeccion < costo_habilidad
+		$UI/PanelHabilidades/VBox/BotonFrio.disabled = puntos_infeccion < costo_habilidad
 	if not habilidad_calor:
-		$UI/BotonCalor.disabled = puntos_infeccion < costo_habilidad
-	if not habilidad_viajar:
-		$UI/BotonViajar.disabled = puntos_infeccion < costo_habilidad
+		$UI/PanelHabilidades/VBox/BotonCalor.disabled = puntos_infeccion < costo_habilidad
+	if not habilidad_mutacion:
+		$UI/PanelHabilidades/VBox/BotonMutacion.disabled = puntos_infeccion < costo_habilidad
