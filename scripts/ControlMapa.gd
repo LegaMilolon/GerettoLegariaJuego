@@ -98,6 +98,7 @@ var color_hover = Color(1, 1, 1, 0.25)
 var color_nada = Color(0, 0, 0, 0)
 var color_pendiente = Color(1, 1, 1, 0.5)
 var zona_pendiente = {}
+var zona_hover_actual = ""
 
 var habilidad_frio = false
 var habilidad_calor = false
@@ -161,8 +162,6 @@ func _ready():
 		zona_activa[zona.name] = false
 		zona_pendiente[zona.name] = false
 		zona.input_event.connect(_on_zona_click.bind(zona.name))
-		zona.mouse_entered.connect(_on_zona_hover.bind(zona.name))
-		zona.mouse_exited.connect(_on_zona_salir.bind(zona.name))
 		var poligono_col = zona.get_node("Poligono")
 		var poligono_vis = Polygon2D.new()
 		poligono_vis.name = "Visual"
@@ -231,6 +230,7 @@ func _limitar():
 
 
 func _process(_delta):
+	_actualizar_tooltip()
 	if timer_notificacion > 0.0:
 		timer_notificacion -= _delta
 		if timer_notificacion <= 0.0:
@@ -354,29 +354,68 @@ func _on_zona_click(_viewport, evento, _shape_idx, nombre):
 			zona.get_node("Visual").color = Color(0.7, 0, 0, 0.01)
 
 
-func _on_zona_hover(nombre):
-	if juego_iniciado == true:
-		if zona_activa[nombre] == true:
-			var poblacion = _obtener_poblacion(nombre)
-			var porcentaje = float(infectados[nombre]) / float(poblacion) * 100.0
-			var bonito = nombres_bonitos[nombre]
-			$UI/Tooltip.text = bonito + ": " + str(int(porcentaje)) + "%"
-			$UI/Tooltip.visible = true
-		return
-	var zona = $Zonas.get_node(NodePath(nombre))
-	if zona_activa[nombre] == true:
-		return
-	zona.get_node("Visual").color = color_hover
+func _obtener_dificultad(nombre):
+	var prop = _obtener_propagacion(nombre)
+	if prop <= 28.0:
+		return "Facil"
+	elif prop <= 35.0:
+		return "Media"
+	else:
+		return "Dificil"
 
+func _formatear_poblacion(num):
+	if num >= 1000000:
+		return str(num / 1000000) + "." + str((num % 1000000) / 100000) + "M"
+	elif num >= 1000:
+		return str(num / 1000) + "K"
+	return str(num)
 
-func _on_zona_salir(nombre):
-	if juego_iniciado == true:
+func _actualizar_tooltip():
+	var pos_mouse = get_viewport().get_mouse_position()
+	var pos_mundo = get_global_mouse_position()
+	var espacio = get_world_2d().direct_space_state
+	var params = PhysicsPointQueryParameters2D.new()
+	params.position = pos_mundo
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	var resultados = espacio.intersect_point(params, 1)
+	var zona_detectada = ""
+	if resultados.size() > 0:
+		var nodo = resultados[0]["collider"]
+		if nodo.get_parent() == $Zonas:
+			zona_detectada = nodo.name
+	if zona_detectada == "" and zona_hover_actual != "":
+		if not juego_iniciado:
+			var zona = $Zonas.get_node(NodePath(zona_hover_actual))
+			if zona_activa[zona_hover_actual] == false:
+				zona.get_node("Visual").color = color_nada
+		zona_hover_actual = ""
 		$UI/Tooltip.visible = false
 		return
-	var zona = $Zonas.get_node(NodePath(nombre))
-	if zona_activa[nombre] == true:
+	if zona_detectada == "":
 		return
-	zona.get_node("Visual").color = color_nada
+	if zona_detectada != zona_hover_actual:
+		if zona_hover_actual != "" and not juego_iniciado:
+			var zona_ant = $Zonas.get_node(NodePath(zona_hover_actual))
+			if zona_activa[zona_hover_actual] == false:
+				zona_ant.get_node("Visual").color = color_nada
+		zona_hover_actual = zona_detectada
+		if not juego_iniciado:
+			var zona = $Zonas.get_node(NodePath(zona_hover_actual))
+			if zona_activa[zona_hover_actual] == false:
+				zona.get_node("Visual").color = color_hover
+	var bonito = nombres_bonitos[zona_hover_actual]
+	var poblacion = _obtener_poblacion(zona_hover_actual)
+	var dificultad = _obtener_dificultad(zona_hover_actual)
+	var texto = bonito + "\n"
+	texto += "Poblacion: " + _formatear_poblacion(poblacion) + "\n"
+	texto += "Dificultad: " + dificultad
+	if juego_iniciado and zona_activa[zona_hover_actual]:
+		var porcentaje = float(infectados[zona_hover_actual]) / float(poblacion) * 100.0
+		texto += "\nInfectados: " + str(int(porcentaje)) + "%"
+	$UI/Tooltip.text = texto
+	$UI/Tooltip.visible = true
+	$UI/Tooltip.position = Vector2(pos_mouse.x + 15, pos_mouse.y + 15)
 
 
 func _obtener_propagacion(nombre):

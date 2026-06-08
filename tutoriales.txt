@@ -1,23 +1,21 @@
 TUTORIALES USADOS
 -----------------------------
 
-https://www.youtube.com/watch?v=YSzhpNdo2HE  juego tipo plague inc
+https://www.youtube.com/watch?v=YSzhpNdo2HE  juego tipo plague inc, no lo encontre
 
-https://www.youtube.com/watch?v=iU5EhBnf0MM  areas clickleables
+https://youtu.be/ZEG52P0Ybck?si=4Wll-F2wEupdIJTW  areas clickleables
 
-https://www.youtube.com/watch?v=Mc13Z2gboEk contar frames
+https://www.youtube.com/watch?v=pIpDgG16oRU contar frames
 
-https://www.youtube.com/watch?v=sZoYSL0YAGM  hovers
+https://www.youtube.com/watch?v=PwL6FjJrc0E  hovers
 
-https://www.youtube.com/watch?v=J0VCxl0mCZI  mapa estrategico
+https://www.youtube.com/watch?v=J0VCxl0mCZI  mapa estrategico, no lo encontre
 
-https://www.youtube.com/watch?v=guQMaUQMGRY  movimiento de camara
+https://youtu.be/3303LvvYPps?si=6ILW38icaw3zo-Rp  movimiento de camara
 
-https://www.youtube.com/watch?v=mAbRluH5dKg  mejoras
+https://www.youtube.com/watch?v=EMpXt2MLx_4  mejoras
 
-https://www.youtube.com/watch?v=GOaG2JThmYQ  propagacion
+https://www.youtube.com/watch?v=GOaG2JThmYQ  propagacion, no encontre 
 
-https://www.youtube.com/watch?v=Mc13Z2gboEk  sin() para animacion de pulso
-
-https://www.youtube.com/watch?v=s6WGx4YrR7I  PanelContainer y StyleBoxFlat para UI
+https://www.youtube.com/watch?v=2uQde8o7mso  sin() para animacion de pulso
 
