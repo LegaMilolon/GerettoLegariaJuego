@@ -255,22 +255,30 @@ func _process(_delta):
 		var porcentaje_actual = float(infectados[nombre]) / float(poblacion)
 		if porcentaje_actual < 0.2:
 			continue
-		var chance_base = (porcentaje_actual - 0.2) / 0.6
-		if chance_base > 1.0:
-			chance_base = 1.0
-		var mult_ext = 1.0
-		if nombre in zonas_frias and habilidad_frio:
-			mult_ext = 3.0
-		if nombre in zonas_calientes and habilidad_calor:
-			mult_ext = 3.0
-		for vecino in vecinos[nombre]:
-			if zona_activa[vecino] == true:
-				continue
-			if zona_pendiente[vecino] == true:
-				continue
-			if porcentaje_actual >= 0.8:
-				acumulador_externo[vecino] = 100.0
-			else:
+		if porcentaje_actual >= 0.8:
+			for vecino in vecinos[nombre]:
+				if zona_activa[vecino] == true:
+					continue
+				if zona_pendiente[vecino] == true:
+					continue
+				zona_pendiente[vecino] = true
+				infectados[vecino] = 1
+				var zona_vis = $Zonas.get_node(NodePath(vecino))
+				zona_vis.get_node("Visual").color = color_pendiente
+				_mostrar_notificacion(vecino)
+		else:
+			var chance = (porcentaje_actual - 0.2) / 0.6 * prop_ext
+			var mult_ext = 1.0
+			if nombre in zonas_frias and habilidad_frio:
+				mult_ext = 3.0
+			if nombre in zonas_calientes and habilidad_calor:
+				mult_ext = 3.0
+			chance *= mult_ext
+			for vecino in vecinos[nombre]:
+				if zona_activa[vecino] == true:
+					continue
+				if zona_pendiente[vecino] == true:
+					continue
 				var mult_vecino = 1.0
 				if vecino in zonas_frias and habilidad_frio:
 					mult_vecino = 3.0
@@ -279,14 +287,13 @@ func _process(_delta):
 				var mult_viaje = 1.0
 				if habilidad_viajar and nombre in costeras_cruce and vecino in costeras_cruce:
 					mult_viaje = 3.0
-				acumulador_externo[vecino] += infectados[nombre] * prop_ext * 10.0 * chance_base * mult_ext * mult_vecino * mult_viaje
-			if acumulador_externo[vecino] >= 100.0:
-				acumulador_externo[vecino] = 0.0
-				zona_pendiente[vecino] = true
-				infectados[vecino] = 1
-				var zona_vis = $Zonas.get_node(NodePath(vecino))
-				zona_vis.get_node("Visual").color = color_pendiente
-				_mostrar_notificacion(vecino)
+				var chance_final = chance * mult_vecino * mult_viaje
+				if randf() < chance_final:
+					zona_pendiente[vecino] = true
+					infectados[vecino] = 1
+					var zona_vis = $Zonas.get_node(NodePath(vecino))
+					zona_vis.get_node("Visual").color = color_pendiente
+					_mostrar_notificacion(vecino)
 	for nombre in zona_activa.keys():
 		if zona_activa[nombre] == false:
 			continue
